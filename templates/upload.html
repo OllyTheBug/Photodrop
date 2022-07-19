@@ -1,0 +1,38 @@
+{% extends 'layout.html' %}
+
+
+{% block content %}
+
+<div class="columns">
+    <div class="column is-three-fifths is-offset-one-fifth">
+        <div class="card">
+            <div class="card"></div>
+            <form method=post enctype=multipart/form-data>
+                <!-- bulma file upload -->
+                <div class="card-image">
+                    <figure class="image" id="uploadImage">
+                        
+                    </figure>
+                </div>
+                <div class="field">
+                    <label class="label">File</label>
+                    <div class="control">
+                        <input id="fileIn" class="input" type="file" name="file" accept="image/*">
+                        <input type="submit" value="Upload">
+                    </div>
+                </div>
+              </form>
+              <script>
+                document.getElementById('fileIn').onchange = function() {
+                    var reader = new FileReader();
+                    reader.onload = function(e) {
+                        document.getElementById('uploadImage').innerHTML = '<img src="' + e.target.result + '" alt="Uploaded image" />';
+                    };
+                    reader.readAsDataURL(this.files[0]);
+                };
+              </script>
+        </div>
+    </div>
+</div>
+
+{% endblock %}

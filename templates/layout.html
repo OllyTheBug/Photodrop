@@ -1,0 +1,76 @@
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <link rel="stylesheet" href="../static/bulma/css/bulma.css">
+    <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:opsz,wght,FILL,GRAD@20..48,100..700,0..1,-50..200" />
+    <title>Instaclone</title>
+</head>
+<body>
+    <!-- bumper -->
+    <style>
+        .bumper {
+            height: 5vh;
+            background-color: #ffffff;
+        }
+    </style>
+    <div class="bumper">
+
+    </div>
+
+    <!-- Navbar -->
+    <style>
+        #navbar {
+            background-color: #ffffff;
+            border-bottom: 1px solid #e0e0e0;
+            padding: 5px;
+        }
+    </style>
+    <div class="container">
+        <nav id="navbar" class="level">
+            <!-- Left side -->
+            <div class="level-left">
+                <div class="level-item">
+                    <a class="title" href="index.html">
+                        <img src="images/instaclone.png" alt="Instaclone">
+                    </a>
+                </div>
+            </div>
+            <!-- Right side -->
+            <div class="level-right">
+                <div class="level-item">
+                    {% if user.is_authenticated %}
+                        <a class="button is-primary" href="profile">
+                            <span class="icon">
+                                <span class="material-symbols-outlined">
+                                    person
+                                    </span>
+                            </span>
+                            <span>Hello, {{ user.name }}</span>
+                        </a>
+                    {% else %}
+                        <a class="button is-primary" href="login">
+                            <span class="icon">
+                                <i class="fas fa-user"></i>
+                            </span>
+                            <span>Login</span>
+                        </a>
+                    {% endif %}
+                </div>
+                <div class="level-item">
+                </div>
+                <a href="">
+                    <div class="level-item">
+                        <span class="material-symbols-outlined">
+                            menu</span>
+                    </div>
+                </a>
+            </div>
+        </nav>
+        <!-- insert content block -->
+        {% block content %}
+        {% endblock %}
+    </div>
+</body>
+</html>
