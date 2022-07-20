@@ -7,8 +7,7 @@
     <div class="column is-three-fifths is-offset-one-fifth">
         <div class="card">
             <div class="card"></div>
-            <form method=post enctype=multipart/form-data>
-                <!-- bulma file upload -->
+            <form method=put enctype=multipart/form-data>
                 <div class="card-image">
                     <figure class="image" id="uploadImage">
                         
@@ -18,7 +17,12 @@
                     <label class="label">File</label>
                     <div class="control">
                         <input id="fileIn" class="input" type="file" name="file" accept="image/*">
-                        <input type="submit" value="Upload">
+                        <button type="button" class="button" onclick="uploadFile()">Upload</button>
+                        <!-- checkbox to set image to private -->
+                        <label class="checkbox">
+                            <input type="checkbox" id="private" name="private" value="private">
+                            Private
+                        </label>
                     </div>
                 </div>
               </form>
@@ -30,6 +34,29 @@
                     };
                     reader.readAsDataURL(this.files[0]);
                 };
+                // function to upload file with AJAX request
+                function uploadFile() {
+                    // get the value of the checkbox
+                    var private = document.getElementById('private').checked;
+                    // capitalize the values for python
+                    if (private==='true'){
+                        private = 'True';
+                    } else {
+                        private = 'False';
+                    }
+                    // get the file from the input
+                    var file = document.getElementById('fileIn').files[0];
+                    // create a formdata object
+                    var formData = new FormData();
+                    // add the file to the formdata object
+                    formData.append('file', file);
+                    // create an AJAX request
+                    var xhr = new XMLHttpRequest();
+                    // set the AJAX request to send the formdata object.
+                    xhr.open('PUT', 'upload?private=' + private, true);
+                    // send the request
+                    xhr.send(formData);
+                }
               </script>
         </div>
     </div>

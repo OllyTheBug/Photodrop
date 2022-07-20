@@ -8,7 +8,7 @@ import os
 from uuid import uuid4
 
 # Local imports
-from instaclone.db import add_photo_to_user, add_user_to_db, user_from_db_to_obj
+from instaclone.db import add_photo_to_user, add_user_to_db, user_obj_from_db_by_id, get_photos_from_user
 from instaclone.helpers import check_filetype
 from instaclone.models import User
 
@@ -84,27 +84,27 @@ def callback():
     userinfo_endpoint = get_google_cfg()['userinfo_endpoint']
     uri, headers, body = oauth_webapp_client.add_token(userinfo_endpoint)
     userinfo_response = requests.get(uri, headers=headers, data=body)
-    userinfo = userinfo_response.json()
 
     # Check that the email is verified then pull user info.
     if userinfo_response.json().get("email_verified"):
         unique_id = userinfo_response.json()["sub"]
         users_email = userinfo_response.json()["email"]
-        picture = userinfo_response.json()["picture"]
+        pfp = userinfo_response.json()["picture"]
         users_name = userinfo_response.json()["given_name"]
     else:
         return "User email not available or not verified by Google.", 400
 
 # ----------- Create dict of user info to add to database document ----------- #
     user_dict = {
+        'id' : unique_id,
         'email': users_email,
-        'pfp': picture,
+        'pfp': pfp,
         'name': users_name
     }
     add_user_to_db(user_dict)
 
 # ----------------------- Login user using flask-login ----------------------- #
-    user = user_from_db_to_obj(users_email)
+    user = user_obj_from_db_by_id(unique_id)
     login_user(user, remember=True)
     return redirect(url_for('views.render_index'))
 
@@ -116,7 +116,7 @@ def logout():
 # ------------------------------- Route upload ------------------------------- #
 
 
-@views.route('/upload', methods=['POST'])
+@views.route('/upload', methods=['PUT'])
 @login_required
 def upload_file():
 # ---------------------- Check whether file is submitted --------------------- #
@@ -138,9 +138,14 @@ def upload_file():
         # Generate a unique filename
         filename = secure_filename(file.filename).split('.')[0] + '_' + str(uuid4().hex) + '.' + file.filename.split('.')[1]
         file.save(os.path.join('instaclone/uploads', filename)) 
+        # check whether upload is private
+        if request.args.get('private') == 'true':
+            private = True
+        else:
+            private = False
         # add file to db
         url = url_for('views.uploaded_file', filename=filename)
-        add_photo_to_user(current_user.email, url)
+        add_photo_to_user(current_user.id, url, private)
         return redirect(url_for('views.uploaded_file',
                                 filename=filename))
 
@@ -151,7 +156,18 @@ def upload_form():
     current_app.logger.info(current_user)
     return render_template('upload.html', user=current_user)
 
+# Route user profile
+@login_required
+@views.route('/profile', methods=['GET'])
+def profile():
+    current_app.logger.info(f'{current_user.name} is viewing their profile')
+    photos = get_photos_from_user(current_user.id)
+    return render_template('profile.html', photos=photos, user=current_user)
 
-@views.route('/uploads/<filename>')
+# ------------------------------ TODO: Implement ----------------------------- #
+@views.route('/photos/<filename>')
 def uploaded_file(filename):
-    return send_from_directory(current_app.config['UPLOAD_FOLDER'], filename)
+    # send url for non-static folder uploads
+    photo = send_from_directory('uploads', filename.rsplit('/')[-1])
+    return photo
+    pass

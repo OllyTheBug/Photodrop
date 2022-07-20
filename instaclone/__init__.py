@@ -6,7 +6,7 @@ from uuid import uuid4
 
 import os
 
-from instaclone.db import user_from_db_to_obj
+from instaclone.db import user_obj_from_db_by_email
 
 # ---------------------------------------------------------------------------- #
 #                       Initialization and configuration                       #
@@ -15,7 +15,7 @@ from instaclone.db import user_from_db_to_obj
 app = Flask(__name__)
 
 # --------------------- Secret key for session management -------------------- #
-secret_key = uuid4().hex
+secret_key = "testing secret key"
 app.secret_key = secret_key
 
 
@@ -40,7 +40,7 @@ login_manager.init_app(app)
 
 @login_manager.user_loader
 def load_user(user_id):
-    return user_from_db_to_obj(user_id)
+    return user_obj_from_db_by_email(user_id)
 
 
 

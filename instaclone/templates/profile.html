@@ -1,0 +1,33 @@
+{% extends 'layout.html' %}
+
+
+{% block content %}
+
+<div class="columns">
+    <div class="column is-three-fifths is-offset-one-fifth">
+        <div class="card">
+            <div class="card"></div>
+                <!-- for each photo in photos, draw a card -->
+                {% for photo in photos %}
+                    <div class="card">
+                        <div class="card-image">
+                            <figure class="image is-4by3">
+                                <img src="{{ photo.url }}" alt="{{ photo.private }}">
+                            </figure>
+                        </div>
+                        <div class="card-content">
+                            <div class="media">
+                                <div class="media-content">
+                                    <p class="title is-4">{{ user.name }}</p>
+                                    <p class="subtitle is-6">{{ photo.private }}</p>
+                                </div>
+                            </div>
+                    </div>
+                {% endfor %}
+              <script>
+
+        </div>
+    </div>
+</div>
+
+{% endblock %}
