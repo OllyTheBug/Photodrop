@@ -8,8 +8,13 @@
         <div class="card">
             <div class="card"></div>
                 <!-- for each photo in photos, draw a card -->
+                <style>
+                    .profile-card {
+                        margin-top: 20px;
+                    }
+                </style>
                 {% for photo in photos %}
-                    <div class="card">
+                    <div class="card profile-card">
                         <div class="card-image">
                             <figure class="image is-4by3">
                                 <img src="{{ photo.url }}" alt="{{ photo.private }}">
