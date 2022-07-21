@@ -12,6 +12,16 @@
                 .profile-card {
                     margin-top: 20px;
                 }
+
+                .crud-button {
+                    display: flex;
+                    align-items: center;
+                    padding: 4px;
+                    border: 1px solid #ccc;
+                    border-radius: 4px;
+                    width: fit-content;
+                    text-align: center;
+                }
             </style>
             {% for photo in photos %}
             <div class="card profile-card">
@@ -21,12 +31,26 @@
                     </figure>
                 </div>
                 <div class="card-content">
+                    <div class="title crud-button">
+
+                        <div class="content">
+                            . . .
+                        </div>
+
+                    </div>
                     <div class="media">
+
+
                         <div class="media-content">
                             <p class="title is-4">{{ user.name }}</p>
                             <p class="subtitle is-6">{{ photo.caption }}</p>
                         </div>
+                        <br>
+
                     </div>
+
+
+
                 </div>
                 <hr>
                 {% endfor %}
