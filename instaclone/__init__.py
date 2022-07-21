@@ -26,7 +26,7 @@ app.secret_key = secret_key
 
 # ------------------------------ Upload settings ----------------------------- #
 app.config['UPLOAD_TYPES'] = set(['bmp', 'png', 'jpg', 'jpeg', 'gif', 'tiff'])
-app.config['UPLOAD_FOLDER'] = '.\\uploads'
+app.config['UPLOAD_FOLDER'] = 'instaclone\\uploads'
 app.config['MAX_CONTENT_LENGTH'] = 16 * 1024 * 1024
 
 # -------------------- To allow local testing without SSL -------------------- #

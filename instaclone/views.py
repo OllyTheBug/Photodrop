@@ -4,6 +4,8 @@ from oauthlib.oauth2 import WebApplicationClient
 from werkzeug.utils import secure_filename
 import requests
 import json
+import base64
+import imghdr
 import os
 from uuid import uuid4
 
@@ -119,36 +121,39 @@ def logout():
 @views.route('/upload', methods=['PUT'])
 @login_required
 def upload_file():
-# ---------------------- Check whether file is submitted --------------------- #
-    if 'file' not in request.files:
-        flash('No file part')
-        current_app.logger.error('No file part')
-        return redirect(request.url)
-
-# ------------------- Check whether file is unnamed somehow ------------------ #
-    file = request.files['file']
-    if file.filename == '': 
-        flash('no file selected for uploading')
-        current_app.logger.error('No file selected for uploading')
-        return redirect(request.url)
-
-# ----------------------- Sanitize filename and upload ----------------------- #
-    if file and check_filetype(file.filename):
-        current_app.logger.info('File is allowed')
-        # Generate a unique filename
-        filename = secure_filename(file.filename).split('.')[0] + '_' + str(uuid4().hex) + '.' + file.filename.split('.')[1]
-        file.save(os.path.join('instaclone/uploads', filename)) 
-        # check whether upload is private
-        if request.args.get('private') == 'true':
-            private = True
-        else:
-            private = False
-        # add file to db
-        url = url_for('views.uploaded_file', filename=filename)
-        add_photo_to_user(current_user.id, url, private)
-        return redirect(url_for('views.uploaded_file',
-                                filename=filename))
-
+# ------- Get caption, private status, and image in base64 from request ------ #
+    r_json = request.get_json()
+    photo_base64 = r_json['base64']
+    caption = r_json['caption']
+    private = r_json['private']
+# ------------- Check that photo_base64 is not empty ------------- #
+    if photo_base64 == '':
+        return "Error: No photo uploaded.", 400
+# ----------------------------- Parse image data ----------------------------- #
+    # String is in the form "data:image/<ext>;base64,<image data>"
+    filetype = photo_base64.split(';')[0].split('/')[1]
+# ---------------------- Check that filetype is allowed ---------------------- #
+    if filetype not in current_app.config['UPLOAD_TYPES']:
+        return "Error: Filetype not allowed.", 400
+# ---------------------- Convert base64 to image binary ---------------------- #
+    
+    image_data = photo_base64.split(';base64,')[1]
+    image_data = image_data.encode('utf-8')
+    image_data = base64.b64decode(image_data)
+# -------------------------- Save image data to file ------------------------- #
+    filename = str(uuid4()) + '.' + filetype
+    filepath = os.path.join(current_app.config['UPLOAD_FOLDER'], filename)
+    with open(filepath, 'wb') as f:
+        f.write(image_data)
+# ------------ Verify filetype with imghdr to prevent fires ------------ #
+    if imghdr.what(filepath) not in current_app.config['UPLOAD_TYPES']:
+        return "Error: Filetype not allowed.", 400
+    current_app.logger.info('Saved file to: ' + filepath)
+# --------------------------- Add photo to database --------------------------- #
+    add_photo_to_user(current_user.id, f'photos\\{filename}', private, caption)
+# ---------------------------- return 200 --------------------------- #
+    return 'Upload successful', 200
+    
 
 @views.route('/upload', methods=['GET'])
 @login_required

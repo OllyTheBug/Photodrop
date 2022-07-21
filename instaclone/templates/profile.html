@@ -7,32 +7,32 @@
     <div class="column is-three-fifths is-offset-one-fifth">
         <div class="card">
             <div class="card"></div>
-                <!-- for each photo in photos, draw a card -->
-                <style>
-                    .profile-card {
-                        margin-top: 20px;
-                    }
-                </style>
-                {% for photo in photos %}
-                    <div class="card profile-card">
-                        <div class="card-image">
-                            <figure class="image is-4by3">
-                                <img src="{{ photo.url }}" alt="{{ photo.private }}">
-                            </figure>
+            <!-- for each photo in photos, draw a card -->
+            <style>
+                .profile-card {
+                    margin-top: 20px;
+                }
+            </style>
+            {% for photo in photos %}
+            <div class="card profile-card">
+                <div class="card-image">
+                    <figure class="image is-4by3">
+                        <img src="{{ photo.url }}" alt="{{ photo.caption }}">
+                    </figure>
+                </div>
+                <div class="card-content">
+                    <div class="media">
+                        <div class="media-content">
+                            <p class="title is-4">{{ user.name }}</p>
+                            <p class="subtitle is-6">{{ photo.caption }}</p>
                         </div>
-                        <div class="card-content">
-                            <div class="media">
-                                <div class="media-content">
-                                    <p class="title is-4">{{ user.name }}</p>
-                                    <p class="subtitle is-6">{{ photo.private }}</p>
-                                </div>
-                            </div>
                     </div>
+                </div>
+                <hr>
                 {% endfor %}
-              <script>
 
+            </div>
         </div>
     </div>
-</div>
 
-{% endblock %}
+    {% endblock %}

@@ -7,78 +7,87 @@
     <div class="column is-three-fifths is-offset-one-fifth">
         <div class="card">
             <div class="card"></div>
-            <form method=put enctype=multipart/form-data>
-                <div class="card-image">
-                    <figure class="image" id="uploadImage">
-                    </figure>
-                </div>
-
-                <style>
-                    .check-button {}
-                </style>
-                <div class="field">
-                    <label class="label"><p class="title" style="padding: 8px;">Upload a New Image</p></label>
-                    <div class="control">
-                        <input id="fileIn" class="input" type="file" name="file" accept="image/*">
-
-                        <textarea class="textarea" placeholder="Enter a caption"></textarea>
-
-                        <button type="button" class="button" data-tooltip="Test Text"
-                            onclick="uploadFile()">Upload</button>
-                        <!-- checkbox to set image to private -->
-                        <span class="check-button button">
-
-                            <label class="checkbox">
-                                <input type="checkbox" id="private" name="private" value="private">
-                                Private
-                            </label>
-                        </span>
-
-                    </div>
-                </div>
-            </form>
-            <script>
-                document.getElementById('fileIn').onchange = function () {
-                    var reader = new FileReader();
-                    reader.onload = function (e) {
-                        document.getElementById('uploadImage').innerHTML = '<img src="' + e.target.result + '" alt="Uploaded image" />';
-                        //add class is-4by3 to image
-                        document.getElementById('uploadImage').classList.add('is-4by3');
-                    };
-                    reader.readAsDataURL(this.files[0]);
-                };
-                // function to upload file with AJAX request
-                function uploadFile() {
-                    // get the value of the checkbox
-                    var private = document.getElementById('private').checked;
-                    // capitalize the values for python
-                    if (private === 'true') {
-                        private = 'True';
-                    } else {
-                        private = 'False';
-                    }
-                    // get the file from the input
-                    var file = document.getElementById('fileIn').files[0];
-                    // create a formdata object
-                    var formData = new FormData();
-                    // add the file to the formdata object
-                    formData.append('file', file);
-                    // verify if the file is an image
-                    if (file === undefined) {
-                        alert('Please select an image');
-                    } else {
-                        // create an AJAX request
-                        var xhr = new XMLHttpRequest();
-                        // set the AJAX request to send the formdata object.
-                        xhr.open('PUT', 'upload?private=' + private, true);
-                        // send the request
-                        xhr.send(formData);
-                    }
-
-                }
-            </script>
+            <form method=put enctype=multipart/form-data> <div class="card-image">
+                <figure class="image" id="uploadImage">
+                </figure>
         </div>
+
+        <style>
+            .check-button {}
+        </style>
+        <div class="field">
+            <label class="label">
+                <p class="title" style="padding: 8px;">Upload a New Image</p>
+            </label>
+            <div class="control">
+                <input id="fileIn" class="input" type="file" name="file" accept="image/*">
+
+                <textarea class="textarea" id="caption" placeholder="Enter a caption"></textarea>
+
+                <button type="button" class="button" data-tooltip="Test Text" onclick="uploadFile()">Upload</button>
+                <!-- checkbox to set image to private -->
+                <span class="check-button button">
+
+                    <label class="checkbox">
+                        <input type="checkbox" id="private" name="private" value="private">
+                        Private
+                    </label>
+                </span>
+
+            </div>
+        </div>
+        </form>
+        <script>
+            document.getElementById('fileIn').onchange = function () {
+                var reader = new FileReader();
+                reader.onload = function (e) {
+                    document.getElementById('uploadImage').innerHTML = '<img src="' + e.target.result +
+                        '" alt="Uploaded image" />';
+                    //add class is-4by3 to image
+                    document.getElementById('uploadImage').classList.add('is-4by3');
+                };
+                reader.readAsDataURL(this.files[0]);
+            };
+            // function to upload file with AJAX request
+            function uploadFile() {
+                // get the value of the checkbox
+                var private = document.getElementById('private').checked;
+                // capitalize the values for python
+                if (private === 'true') {
+                    private = 'True';
+                } else {
+                    private = 'False';
+                }
+                // get the file from the input
+                var file = document.getElementById('fileIn').files[0];
+                // convert the file to base64 and send an XMLHttpRequest to the server
+                var reader = new FileReader();
+                reader.readAsDataURL(file);
+                reader.onload = function () {
+                    var base64 = reader.result;
+                    var xhr = new XMLHttpRequest();
+                    xhr.open('PUT', '/upload');
+                    xhr.setRequestHeader('Content-Type', 'application/json');
+                    xhr.send(JSON.stringify({
+                        'base64': base64,
+                        'caption': document.getElementById('caption').value,
+                        'private': private
+                    }));
+                    xhr.onload = function () {
+                        if (xhr.status === 200) {
+                            window.location.href = '/profile';
+                        } else if(xhr.status = 400) {
+                            alert('Please upload an image file');
+                        }
+                    };
+                };
+
+                
+
+            }
+        </script>
     </div>
+</div>
 </div>
 
 {% endblock %}

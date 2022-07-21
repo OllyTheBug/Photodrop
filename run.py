@@ -1,5 +1,5 @@
 import os
-os.environ['GOOGLE_APPLICATION_CREDENTIALS'] = 'C:\\Users\\Olly\\Documents\\instaclone-356500-e4bf652fddeb.json'
+os.environ['GOOGLE_APPLICATION_CREDENTIALS'] = 'C:\\Users\\mendelse\\Documents\\instaclone.json'
 
 # Local imports
 from instaclone.__init__ import app

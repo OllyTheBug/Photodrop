@@ -39,13 +39,13 @@ def add_user_to_db(user_dict):
     return doc_ref.get().to_dict()
 
 
-def add_photo_to_user(user_id, url, private):
+def add_photo_to_user(user_id, url, private, caption):
     # Get user document by email
     doc_ref = db.collection('users').document(user_id)
     # Update photos object with new photo and private status
     try:
         doc_ref = doc_ref.update({
-            'photos': firestore.ArrayUnion([{'url': url, 'private': private}])})
+            'photos': firestore.ArrayUnion([{'url': url, 'private': private, 'caption': caption}])})
         return 0
     except Exception as e:
         print(e)
