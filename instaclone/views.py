@@ -10,9 +10,8 @@ import os
 from uuid import uuid4
 
 # Local imports
-from instaclone.db import add_photo_to_user, add_user_to_db, user_obj_from_db_by_id, get_photos_from_user
-from instaclone.helpers import check_filetype
-from instaclone.models import User
+from instaclone.db import add_photo_to_user, add_user_to_db, remove_photo_from_user, user_obj_from_db_by_id, get_photos_from_user
+
 
 views = Blueprint('views', __name__)
 
@@ -27,6 +26,7 @@ GOOGLE_DISCOVERY_URL = (
     "https://accounts.google.com/.well-known/openid-configuration"
 )
 
+
 def get_google_cfg():
     try:
         GOOGLE_CFG = requests.get(GOOGLE_DISCOVERY_URL).json()
@@ -35,6 +35,7 @@ def get_google_cfg():
         flash('Error: Could not get Google configuration.')
     return GOOGLE_CFG
 
+
 oauth_webapp_client = WebApplicationClient(GOOGLE_CLIENT_ID)
 
 # ---------------------------------------------------------------------------- #
@@ -42,9 +43,11 @@ oauth_webapp_client = WebApplicationClient(GOOGLE_CLIENT_ID)
 # ---------------------------------------------------------------------------- #
 
 # -------------------------------- Route index ------------------------------- #
+
+
 @views.route('/')
 def render_index():
-    #log current user
+    # log current user
     return render_template('index.html', user=current_user)
 
 # --------------------------- Route login and oauth -------------------------- #
@@ -80,8 +83,9 @@ def callback():
     token_response = requests.post(token_url, headers=headers, data=body,
                                    auth=(GOOGLE_CLIENT_ID, GOOGLE_CLIENT_SECRET))
     # Parse token response.
-    oauth_webapp_client.parse_request_body_response(json.dumps(token_response.json()))
-    
+    oauth_webapp_client.parse_request_body_response(
+        json.dumps(token_response.json()))
+
 # ------------------------ Get user info from Google. ------------------------ #
     userinfo_endpoint = get_google_cfg()['userinfo_endpoint']
     uri, headers, body = oauth_webapp_client.add_token(userinfo_endpoint)
@@ -98,7 +102,7 @@ def callback():
 
 # ----------- Create dict of user info to add to database document ----------- #
     user_dict = {
-        'id' : unique_id,
+        'id': unique_id,
         'email': users_email,
         'pfp': pfp,
         'name': users_name
@@ -110,6 +114,7 @@ def callback():
     login_user(user, remember=True)
     return redirect(url_for('views.render_index'))
 
+
 @views.route('/logout')
 def logout():
     logout_user()
@@ -118,10 +123,10 @@ def logout():
 # ------------------------------- Route upload ------------------------------- #
 
 
-@views.route('/upload', methods=['PUT'])
+@views.route('/photos', methods=['PUT'])
 @login_required
 def upload_file():
-# ------- Get caption, private status, and image in base64 from request ------ #
+    # ------- Get caption, private status, and image in base64 from request ------ #
     r_json = request.get_json()
     photo_base64 = r_json['base64']
     caption = r_json['caption']
@@ -131,12 +136,14 @@ def upload_file():
         return "Error: No photo uploaded.", 400
 # ----------------------------- Parse image data ----------------------------- #
     # String is in the form "data:image/<ext>;base64,<image data>"
-    filetype = photo_base64.split(';')[0].split('/')[1]
+    try:
+        filetype = photo_base64.split(';')[0].split('/')[1]
+    except ValueError:
+        return "Error: Invalid format.", 400
 # ---------------------- Check that filetype is allowed ---------------------- #
     if filetype not in current_app.config['UPLOAD_TYPES']:
         return "Error: Filetype not allowed.", 400
 # ---------------------- Convert base64 to image binary ---------------------- #
-    
     image_data = photo_base64.split(';base64,')[1]
     image_data = image_data.encode('utf-8')
     image_data = base64.b64decode(image_data)
@@ -145,7 +152,7 @@ def upload_file():
     filepath = os.path.join(current_app.config['UPLOAD_FOLDER'], filename)
     with open(filepath, 'wb') as f:
         f.write(image_data)
-# ------------ Verify filetype with imghdr to prevent fires ------------ #
+# --------------- Verify filetype with imghdr to prevent fires --------------- #
     if imghdr.what(filepath) not in current_app.config['UPLOAD_TYPES']:
         return "Error: Filetype not allowed.", 400
     current_app.logger.info('Saved file to: ' + filepath)
@@ -153,7 +160,7 @@ def upload_file():
     add_photo_to_user(current_user.id, f'photos\\{filename}', private, caption)
 # ---------------------------- return 200 --------------------------- #
     return 'Upload successful', 200
-    
+
 
 @views.route('/upload', methods=['GET'])
 @login_required
@@ -162,6 +169,8 @@ def upload_form():
     return render_template('upload.html', user=current_user)
 
 # Route user profile
+
+
 @login_required
 @views.route('/profile', methods=['GET'])
 def profile():
@@ -169,10 +178,20 @@ def profile():
     photos = get_photos_from_user(current_user.id)
     return render_template('profile.html', photos=photos, user=current_user)
 
-# ------------------------------ TODO: Implement ----------------------------- #
-@views.route('/photos/<filename>')
+
+@views.route('/photos/<filename>', methods=['GET'])
 def uploaded_file(filename):
     # send url for non-static folder uploads
     photo = send_from_directory('uploads', filename.rsplit('/')[-1])
     return photo
-    pass
+
+# --------------------------- Route photo deletion --------------------------- #
+
+
+@views.route('/photos/<filename>', methods=['DELETE'])
+@login_required
+def delete_photo(filename):
+    current_app.logger.info(
+        f'{current_user.name} is deleting photo {filename}')
+    remove_photo_from_user(current_user.id, filename)
+    return 'Photo deleted', 200

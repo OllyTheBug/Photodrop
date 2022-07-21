@@ -66,7 +66,7 @@
                 reader.onload = function () {
                     var base64 = reader.result;
                     var xhr = new XMLHttpRequest();
-                    xhr.open('PUT', '/upload');
+                    xhr.open('PUT', '/photos');
                     xhr.setRequestHeader('Content-Type', 'application/json');
                     xhr.send(JSON.stringify({
                         'base64': base64,
