@@ -13,14 +13,25 @@
                     margin-top: 20px;
                 }
 
-                .crud-button {
+                .crud-menu {
                     display: flex;
                     align-items: center;
                     padding: 4px;
                     border: 1px solid #ccc;
                     border-radius: 4px;
-                    width: fit-content;
+                    width: 35px;
                     text-align: center;
+                    /* transition width */
+                    transition: width 0.3s ease-in-out;
+                    overflow: hidden;
+                }
+                /* .crud-menu hover */
+                .crud-menu:hover {
+                    width: 175px;
+                }
+
+                .menu-item {
+                    margin-right:20px;
                 }
             </style>
             {% for photo in photos %}
@@ -31,12 +42,20 @@
                     </figure>
                 </div>
                 <div class="card-content">
-                    <div class="title crud-button">
-
-                        <div class="content">
-                            . . .
-                        </div>
-
+                    
+                    <div class="title crud-menu" onclick="menuPop()">
+                        <span class="menu-item material-symbols-outlined">
+                            menu
+                        </span>
+                        <span class="menu-item material-symbols-outlined">
+                            edit
+                        </span>
+                        <span class="menu-item material-symbols-outlined">
+                            delete
+                        </span>
+                        <span class="menu-item material-symbols-outlined">
+                            link
+                        </span>
                     </div>
                     <div class="media">
 
@@ -54,7 +73,14 @@
                 </div>
                 <hr>
                 {% endfor %}
+                <script>
+                    function menuPop() {
+                        var popup = document.getElementsByClassName("popuptext")[0];
+                        //toggle between show and hide
+                        popup.classList.toggle("show");
 
+                    }
+                </script>
             </div>
         </div>
     </div>
