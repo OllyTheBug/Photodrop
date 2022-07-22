@@ -107,11 +107,10 @@ def remove_photo_from_user(user_id, url):
 def update_photo_of_user(user_id, url, private, caption):
     # Get user document by id
     doc_ref = db.collection('users').document(user_id)
-    # Update photo object with new private status and caption
+    # remove the first photo in the photos object
     try:
         doc_ref = doc_ref.update({
-            'photos': firestore.ArrayUnion([{'url': url, 'private': private, 'caption': caption}])})
-        return 0
+            'photos': firestore.ArrayRemove([{'url': "photos\\0082bae4-12a5-4d40-b4b1-9d427e341bf8.png", 'private': 'False', 'caption': "asdasd"}])})
     except Exception as e:
         print(e)
         return -1
