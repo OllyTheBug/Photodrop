@@ -10,7 +10,7 @@ import os
 from uuid import uuid4
 
 # Local imports
-from instaclone.db import add_user_to_datastore, usr_obj_from_datastore_by_id
+from instaclone.db import add_user_to_datastore, usr_obj_from_datastore_by_id, add_photo_to_user, get_user_from_datastore_by_id, get_photos_from_user
 
 views = Blueprint('views', __name__)
 
@@ -108,7 +108,7 @@ def callback():
 
 # ----------------------- Login user using flask-login ----------------------- #
     user = usr_obj_from_datastore_by_id(id)
-    login_user(user, remember=True)
+    login_user(user)
     return redirect(url_for('views.render_index'))
 
 
@@ -173,6 +173,8 @@ def upload_form():
 def profile():
     current_app.logger.info(f'{current_user.name} is viewing their profile')
     photos = get_photos_from_user(current_user.id)
+    # convert list of entities to list of dicts
+    photos = [dict(photo) for photo in photos]
     return render_template('profile.html', photos=photos, user=current_user)
 
 # ---------------------------- Route photo access ---------------------------- #
@@ -188,10 +190,14 @@ def uploaded_file(filename):
 
 @views.route('/photos/<filename>', methods=['DELETE'])
 @login_required
-def delete_photo(filename):
+def delete_photo(url):
     current_app.logger.info(
-        f'{current_user.name} is deleting photo {filename}')
-    remove_photo_from_user(current_user.id, filename)
+        f'{current_user.name} is deleting photo {url}')
+    # remove photo from database
+    remove_photo_from_user(current_user.id, url)
+    # delete photo from filesystem
+    filename = url.rsplit('/')[-1]
+    os.remove(os.path.join(current_app.config['UPLOAD_FOLDER'], filename))
     return 'Photo deleted', 200
 
 # ---------------------------- Route photo update ---------------------------- #

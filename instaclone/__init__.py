@@ -40,6 +40,7 @@ login_manager.init_app(app)
 
 @login_manager.user_loader
 def load_user(user_id):
+    app.logger.info('Loading user with id: ' + user_id)
     return usr_obj_from_datastore_by_email(user_id)
 
 
