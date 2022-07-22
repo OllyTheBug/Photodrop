@@ -3,4 +3,4 @@ pymongo[srv]
 oauthlib
 requests
 flask-login
-google-cloud-firestore
+google-cloud-datastore

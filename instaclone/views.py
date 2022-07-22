@@ -10,8 +10,7 @@ import os
 from uuid import uuid4
 
 # Local imports
-from instaclone.db import add_photo_to_user, add_user_to_db, remove_photo_from_user, update_photo_of_user, user_obj_from_db_by_id, get_photos_from_user
-
+from instaclone.db import add_user_to_datastore, usr_obj_from_datastore_by_id
 
 views = Blueprint('views', __name__)
 
@@ -93,7 +92,6 @@ def callback():
 
     # Check that the email is verified then pull user info.
     if userinfo_response.json().get("email_verified"):
-        unique_id = userinfo_response.json()["sub"]
         users_email = userinfo_response.json()["email"]
         pfp = userinfo_response.json()["picture"]
         users_name = userinfo_response.json()["given_name"]
@@ -102,15 +100,14 @@ def callback():
 
 # ----------- Create dict of user info to add to database document ----------- #
     user_dict = {
-        'id': unique_id,
         'email': users_email,
         'pfp': pfp,
         'name': users_name
     }
-    add_user_to_db(user_dict)
+    id = add_user_to_datastore(user_dict)
 
 # ----------------------- Login user using flask-login ----------------------- #
-    user = user_obj_from_db_by_id(unique_id)
+    user = usr_obj_from_datastore_by_id(id)
     login_user(user, remember=True)
     return redirect(url_for('views.render_index'))
 

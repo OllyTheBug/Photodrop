@@ -6,7 +6,7 @@ from uuid import uuid4
 
 import os
 
-from instaclone.db import user_obj_from_db_by_email
+from instaclone.db import usr_obj_from_datastore_by_email
 
 # ---------------------------------------------------------------------------- #
 #                       Initialization and configuration                       #
@@ -40,7 +40,7 @@ login_manager.init_app(app)
 
 @login_manager.user_loader
 def load_user(user_id):
-    return user_obj_from_db_by_email(user_id)
+    return usr_obj_from_datastore_by_email(user_id)
 
 
 
