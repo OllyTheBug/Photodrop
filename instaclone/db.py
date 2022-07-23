@@ -75,7 +75,7 @@ def add_photo_to_user(user_id,url,private,caption):
     if 'photos' not in entity:
         entity['photos'] = [{'url':url,'private':private,'caption':caption}]
     else:
-        entity['photos'].append({'url':url,'private':private,'caption':caption})
+        entity['photos']= [{'url':url,'private':private,'caption':caption}] + entity['photos']
     # update datastore
     db.put(entity)
     # return dict of updated user
