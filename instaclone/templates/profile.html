@@ -101,9 +101,11 @@
                             data-target="modal{{loop.index0}}">
                             edit
                         </span>
-                        <span class="menu-item material-symbols-outlined">
-                            delete
-                        </span>
+                        <a data-confirm="Are you sure?" data-method="delete" href="{{photo.url}}">
+                            <span class="menu-item material-symbols-outlined">
+                                delete
+                            </span>
+                        </a>
                         <span class="menu-item material-symbols-outlined">
                             link
                         </span>
