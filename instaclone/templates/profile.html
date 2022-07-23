@@ -15,6 +15,10 @@
                     margin-top: 20px;
                 }
 
+                .imagePreview{
+                    object-fit: contain;
+                }
+
                 .crud-menu {
                     display: flex;
                     align-items: center;
@@ -33,6 +37,15 @@
                     width: 175px;
                 }
 
+                .tooltip{
+                    /* hidden by default */
+                    display: none;
+                    position: relative;
+                    border: 1px solid rgb(197, 197, 197);
+                    box-shadow: 2px 2px 2px #000;
+                    right: 100px;
+                }
+
                 .menu-item {
                     margin-right: 20px;
                 }
@@ -46,7 +59,8 @@
                         <div class="modal-card-body">
                             <!-- Form to edit caption and private -->
                             <!-- ------------ Send the index of the photo in user document as a q string ------------- -->
-                            <form method="post" action="{{photos[loop.index0]['url']}}?index={{loop.index0}}" enctype="application/json">
+                            <form method="post" action="{{photos[loop.index0]['url']}}?index={{loop.index0}}"
+                                enctype="application/json">
                                 <div class="field">
                                     <label class="label">
                                         <p class="title" style="padding: 8px;">Edit Caption</p>
@@ -62,13 +76,13 @@
                                     </label>
                                     <div class="control">
                                         <label class="radio">
-                                            <input type="radio" name="private{{loop.index0}}" value="private" {% if photo.private=='private'
-                                                %}checked{% endif %}>
+                                            <input type="radio" name="private{{loop.index0}}" value="private" {% if
+                                                photo.private=='private' %}checked{% endif %}>
                                             Private
                                         </label>
                                         <label class="radio">
-                                            <input type="radio" name="private{{loop.index0}}" value="public" {% if photo.private!='private'
-                                                %}checked{% endif %}>
+                                            <input type="radio" name="private{{loop.index0}}" value="public" {% if
+                                                photo.private!='private' %}checked{% endif %}>
                                             Public
                                         </label>
                                     </div>
@@ -85,15 +99,18 @@
                 <button class="modal-close is-large" aria-label="close"></button>
             </div>
 
-            <div class="card profile-card">
+            <div id="{{photo.url}}" class="card profile-card">
                 <div class="card-image">
                     <figure class="image is-4by3">
-                        <img src="{{ photo.url }}" alt="{{ photo.caption }}">
+                        <img class="imgPreview" src="{{ photo.url }}" alt="{{ photo.caption }}">
                     </figure>
                 </div>
+
                 <div class="card-content">
 
-                    <div class="title crud-menu" onclick="menuPop()">
+                    <span class="tooltip"> Link Copied!</span>
+
+                    <div class="title crud-menu">
                         <span class="menu-item material-symbols-outlined">
                             menu
                         </span>
@@ -101,14 +118,15 @@
                             data-target="modal{{loop.index0}}">
                             edit
                         </span>
-                        <a data-confirm="Are you sure?" data-method="delete" href="{{photo.url}}">
-                            <span class="menu-item material-symbols-outlined">
-                                delete
-                            </span>
-                        </a>
-                        <span class="menu-item material-symbols-outlined">
+
+                        <span onclick="deletePhoto(this)" class="menu-item material-symbols-outlined">
+                            delete
+                        </span>
+
+                        <span onclick="copyLink(this)" class="menu-item material-symbols-outlined">
                             link
                         </span>
+                        
                     </div>
                     <div class="media">
 
@@ -127,12 +145,36 @@
                 <hr>
                 {% endfor %}
                 <script>
-                    function menuPop() {
-                        var popup = document.getElementsByClassName("popuptext")[0];
-                        //toggle between show and hide
-                        popup.classList.toggle("show");
+                    // function to delete a photo when the corresponding delete button is clicked, and set an XMLHttpRequest to the photo url with DELETE method
+                    function deletePhoto(clicked) {
+                        //delete closest card
+                        var card = clicked.closest('.card');
+                        photoUrl = card.id;
+                        //send request to delete photo
+                        var xhr = new XMLHttpRequest();
+                        xhr.open('DELETE', photoUrl, true);
+                        xhr.send();
+                        // refresh on success
+                        xhr.onload = function() {
+                            if (xhr.status == 200) {
+                                location.reload();
+                            }
+                        };
+                    }
+
+                    function copyLink(clicked){
+                        var card = clicked.closest('.card');
+                        var link = card.id;
+                        // split link at '\'
+                        var filename = link.split('\\')[1];
+                        // get url of website
+                        var url = window.origin + '/' + 'photos/' + filename;
+                        // copy link to clipboard
+                        navigator.clipboard.writeText(url);
+                        alert("Link copied to clipboard!");
 
                     }
+
                     function openModal($el) {
                         $el.classList.add('is-active');
                     }

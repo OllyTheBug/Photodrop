@@ -13,6 +13,7 @@ from instaclone.db import usr_obj_from_datastore_by_email
 # ---------------------------------------------------------------------------- #
 # ---------------------------- App initialization ---------------------------- #
 app = Flask(__name__)
+# static folder
 
 # --------------------- Secret key for session management -------------------- #
 secret_key = "testing secret key"

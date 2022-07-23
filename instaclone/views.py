@@ -10,7 +10,7 @@ import os
 from uuid import uuid4
 
 # Local imports
-from instaclone.db import add_user_to_datastore, usr_obj_from_datastore_by_id, add_photo_to_user, get_user_from_datastore_by_id, get_photos_from_user
+from instaclone.db import add_user_to_datastore, delete_photo_from_user, update_photo_of_user, usr_obj_from_datastore_by_id, add_photo_to_user, get_user_from_datastore_by_id, get_photos_from_user
 
 views = Blueprint('views', __name__)
 
@@ -190,13 +190,13 @@ def uploaded_file(filename):
 
 @views.route('/photos/<filename>', methods=['DELETE'])
 @login_required
-def delete_photo(url):
+def delete_photo(filename):
     current_app.logger.info(
-        f'{current_user.name} is deleting photo {url}')
+        f'{current_user.name} is deleting photo {filename}')
     # remove photo from database
-    remove_photo_from_user(current_user.id, url)
+    delete_photo_from_user(current_user.id, 'photos\\' + filename)
     # delete photo from filesystem
-    filename = url.rsplit('/')[-1]
+    filename = filename.rsplit('/')[-1]
     os.remove(os.path.join(current_app.config['UPLOAD_FOLDER'], filename))
     return 'Photo deleted', 200
 
@@ -210,6 +210,5 @@ def update_photo(filename):
     r_json = request.form
     caption = r_json[f'caption{index}']
     private = r_json[f'private{index}']
-    filepath = os.path.join(current_app.config['UPLOAD_FOLDER'], filename.split('?')[0])
-    update_photo_of_user(current_user.id, filepath, private, caption)
+    update_photo_of_user(current_user.id, 'photos\\' + filename, private, caption)
     return 'Photo updated', 200

@@ -16,7 +16,9 @@
                 </div>
 
                 <style>
-                    .check-button {}
+                    .imgPreview{
+                        object-fit: contain;
+                    }
                 </style>
 
                 <div class="field">
@@ -46,7 +48,7 @@
                 document.getElementById('fileIn').onchange = function () {
                     var reader = new FileReader();
                     reader.onload = function (e) {
-                        document.getElementById('uploadImage').innerHTML = '<img src="' + e.target.result +
+                        document.getElementById('uploadImage').innerHTML = '<img class="imgPreview" src="' + e.target.result +
                             '" alt="Uploaded image" />';
                         //add class is-4by3 to image
                         document.getElementById('uploadImage').classList.add('is-4by3');

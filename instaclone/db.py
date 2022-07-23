@@ -96,5 +96,17 @@ def delete_photo_from_user(user_id,photo_url):
     # return dict of updated user
     return dict(entity)
 
-
+# ------------------------------- Photo update ------------------------------- #
+def update_photo_of_user(user_id,photo_url,caption,private):
+    # get user from datastore
+    entity = get_user_from_datastore_by_id(user_id)
+    # update photo in "photos" list in user entity
+    for photo in entity['photos']:
+        if photo['url'] == photo_url:
+            photo['caption'] = caption
+            photo['private'] = private
+    # update datastore
+    db.put(entity)
+    # return dict of updated user
+    return dict(entity)
 
