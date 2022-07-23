@@ -3,46 +3,28 @@
 {% block content %}
 <div class="columns">
     <div class="column is-three-fifths is-offset-one-fifth">
+        <!-- for each photo in photos -->
+        {% for photo in photos %}
         <div class="card">
             <div class="card-image">
-                <figure class="image is-4by3">
-                    <img src="../images/1280x960.bmp" alt="">
+                <figure class="image">
+                    <img src="{{ photo['url'] }}" alt="{{ photo.caption }}">
                 </figure>
             </div>
             <div class="card-content">
                 <div class="media">
+                    <div class="media-left">
+                        <figure class="image is-48x48">
+                            <img src="{{ photo.profile_picture }}" alt="Profile picture">
+                        </figure>
+                    </div>
                     <div class="media-content">
-                        <p class="title is-4">
-                            <a href="">
-                                <strong>
-                                    <span class="material-symbols-outlined">
-                                        person</span>
-                                    John Doe
-                                </strong>
-                            </a>
-                        </p>
-                        <p class="subtitle is-6">
-                            <a href="">
-                                <strong>
-                                    <span class="material-symbols-outlined">
-                                        place</span>
-                                    London, UK
-                                </strong>
-                            </a>
-                        </p>
+                        <p class="subtitle is-6">{{ photo.caption }}</p>
                     </div>
                 </div>
-                <div class="content">
-                    Lorem ipsum dolor sit amet, consectetur adipiscing elit.
-                    Phasellus nec iaculis mauris. <a>@bulmaio</a>.
-                    <a href="">#css</a> <a href="">#responsive</a>
-                    <br>
-                    <time datetime="2016-1-1">
-                        1 hour ago
-                    </time>
-                </div>
             </div>
+
         </div>
+        {% endfor %}
     </div>
-</div>
-{% endblock %}
+    {% endblock %}

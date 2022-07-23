@@ -62,6 +62,11 @@ def usr_obj_from_datastore_by_email(email):
     user = User(results[0].id, results[0]['email'], results[0]['name'], results[0]['pfp'])
     return user
 
+def get_all_users():
+    query = db.query(kind='User')
+    results = list(query.fetch())
+    return results
+
 # -------------------------------- Photo creation ------------------------------- #
 def add_photo_to_user(user_id,url,private,caption):
     # get user from datastore
@@ -83,6 +88,21 @@ def get_photos_from_user(user_id):
     entity_dict = dict(entity)
     # return photos list
     return entity_dict['photos']
+
+def get_public_photos_from_user(user_id):
+    # get user from datastore
+    entity = get_user_from_datastore_by_id(user_id)
+    # entity to dict
+    entity_dict = dict(entity)
+    # return photos list
+    return [photo for photo in entity_dict['photos'] if photo['private'] == 'False']
+
+def get_all_public_photos():
+    all_users = get_all_users()
+    all_public_photos = []
+    for user in all_users:
+        all_public_photos.extend(get_public_photos_from_user(user.id))
+    return all_public_photos
 
 # ------------------------------ Photo deletion ------------------------------ #
 

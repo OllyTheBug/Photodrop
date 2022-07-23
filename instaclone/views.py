@@ -10,7 +10,7 @@ import os
 from uuid import uuid4
 
 # Local imports
-from instaclone.db import add_user_to_datastore, delete_photo_from_user, update_photo_of_user, usr_obj_from_datastore_by_id, add_photo_to_user, get_user_from_datastore_by_id, get_photos_from_user
+from instaclone.db import add_user_to_datastore, delete_photo_from_user, get_all_public_photos, update_photo_of_user, usr_obj_from_datastore_by_id, add_photo_to_user, get_user_from_datastore_by_id, get_photos_from_user
 
 views = Blueprint('views', __name__)
 
@@ -46,8 +46,9 @@ oauth_webapp_client = WebApplicationClient(GOOGLE_CLIENT_ID)
 
 @views.route('/')
 def render_index():
-    # log current user
-    return render_template('index.html', user=current_user)
+    # get all public photos
+    all_public_photos = get_all_public_photos()
+    return render_template('index.html', user=current_user, photos=all_public_photos)
 
 # --------------------------- Route login and oauth -------------------------- #
 
@@ -145,7 +146,9 @@ def upload_file():
     image_data = image_data.encode('utf-8')
     image_data = base64.b64decode(image_data)
 # -------------------------- Save image data to file ------------------------- #
+    # Create a unique filename
     filename = str(uuid4()) + '.' + filetype
+    # Save image data to file
     filepath = os.path.join(current_app.config['UPLOAD_FOLDER'], filename)
     with open(filepath, 'wb') as f:
         f.write(image_data)
