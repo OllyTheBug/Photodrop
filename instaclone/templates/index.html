@@ -8,17 +8,18 @@
         <div class="card">
             <div class="card-image">
                 <figure class="image">
-                    <img src="{{ photo['url'] }}" alt="{{ photo.caption }}">
+                    <img src="{{ photo[1]['url'] }}" alt="{{ photo[1].caption }}">
                 </figure>
             </div>
             <div class="card-content">
                 <div class="media">
                     <div class="media-left">
-                        <figure class="image is-48x48">
-                            <img src="{{ photo.profile_picture }}" alt="Profile picture">
-                        </figure>
+
                     </div>
                     <div class="media-content">
+                        <a href="profile/{{photo[2]}}">
+                            <p class="title">{{photo[0]}}</p>
+                        </a>
                         <p class="subtitle is-6">{{ photo.caption }}</p>
                     </div>
                 </div>

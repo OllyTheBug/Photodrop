@@ -10,7 +10,7 @@ import os
 from uuid import uuid4
 
 # Local imports
-from instaclone.db import add_user_to_datastore, delete_photo_from_user, get_all_public_photos, update_photo_of_user, usr_obj_from_datastore_by_id, add_photo_to_user, get_user_from_datastore_by_id, get_photos_from_user
+from instaclone.db import add_user_to_datastore, delete_photo_from_user, get_all_public_photos, get_public_photos_from_user, update_photo_of_user, usr_obj_from_datastore_by_id, add_photo_to_user, get_user_from_datastore_by_id, get_photos_from_user
 
 views = Blueprint('views', __name__)
 
@@ -95,7 +95,7 @@ def callback():
     if userinfo_response.json().get("email_verified"):
         users_email = userinfo_response.json()["email"]
         pfp = userinfo_response.json()["picture"]
-        users_name = userinfo_response.json()["given_name"]
+        users_name = userinfo_response.json()["name"]
     else:
         return "User email not available or not verified by Google.", 400
 
@@ -171,14 +171,29 @@ def upload_form():
 # Route user profile
 
 
-@login_required
+
 @views.route('/profile', methods=['GET'])
+@login_required
 def profile():
     current_app.logger.info(f'{current_user.name} is viewing their profile')
     photos = get_photos_from_user(current_user.id)
     # convert list of entities to list of dicts
     photos = [dict(photo) for photo in photos]
     return render_template('profile.html', photos=photos, user=current_user)
+
+# Route profile by id
+@views.route('/profile/<id>', methods=['GET'])
+def profile_by_id(id):
+    current_app.logger.info(f'{current_user.name} is viewing profile {id}')
+    photos_and_data = get_public_photos_from_user(id)
+    # in the form of (user name, photo url, user id)
+
+    #parse out the photos
+    just_photos = [p_a_d[1] for p_a_d in photos_and_data]
+    user = usr_obj_from_datastore_by_id(id)
+    # convert list of entities to list of dicts
+    photos = [dict(photo) for photo in just_photos]
+    return render_template('profile.html', photos=photos, user=user)
 
 # ---------------------------- Route photo access ---------------------------- #
 
@@ -213,5 +228,5 @@ def update_photo(filename):
     r_json = request.form
     caption = r_json[f'caption{index}']
     private = r_json[f'private{index}']
-    update_photo_of_user(current_user.id, 'photos\\' + filename, private, caption)
+    update_photo_of_user(current_user.id, 'photos\\' + filename, caption, private)
     return 'Photo updated', 200

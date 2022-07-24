@@ -48,6 +48,8 @@
 
                 .menu-item {
                     margin-right: 20px;
+                    cursor: pointer;
+
                 }
             </style>
             {% for photo in photos %}
@@ -102,7 +104,7 @@
             <div id="{{photo.url}}" class="card ">
                 <div class="card-image">
                     <figure class="image is-4by3">
-                        <img class="imgPreview" src="{{ photo.url }}" alt="{{ photo.caption }}">
+                        <img class="imgPreview" src="..\{{ photo.url }}" alt="{{ photo.caption }}">
                     </figure>
                 </div>
 
@@ -149,7 +151,7 @@
                     function deletePhoto(clicked) {
                         //delete closest card
                         var card = clicked.closest('.card');
-                        photoUrl = card.id;
+                        var photoUrl = '..\\' + card.id;
                         //send request to delete photo
                         var xhr = new XMLHttpRequest();
                         xhr.open('DELETE', photoUrl, true);

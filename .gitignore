@@ -11,3 +11,6 @@ uploads/usability_icon.jpg_096c39f4f48d4455b320f06582d4c23c
 instaclone/venv/
 venv/
 *.pyc
+instaclone/__pycache__/__init__.cpython-310.pyc
+instaclone/__pycache__/db.cpython-310.pyc
+instaclone/__pycache__/views.cpython-310.pyc

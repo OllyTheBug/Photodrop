@@ -32,6 +32,9 @@
             border-bottom: 1px solid #e0e0e0;
             padding: 5px;
         }
+        .upload-button{
+            border: 1px solid #494949;
+        }
     </style>
     <div class="container">
         <nav id="navbar" class="level">
@@ -47,7 +50,7 @@
             <div class="level-item">
                 <div>
                     <!-- upload button -->
-                    <a class="button is-primary" href="/upload">
+                    <a class="button is-warning upload-button" href="/upload">
                         <span>Upload</span>
                     </a>
 
@@ -63,7 +66,7 @@
                                     person
                                     </span>
                             </span>
-                            <span>Hello, {{ user.name }}</span>
+                            <span>Hello, {{ user.name.split(' ')[0] }}</span>
                         </a>
                     {% else %}
                         <a class="button is-primary" href="login">
@@ -76,12 +79,12 @@
                 </div>
                 <div class="level-item">
                 </div>
-                <a href="">
+                <!-- <a href="">
                     <div class="level-item">
                         <span class="material-symbols-outlined">
                             menu</span>
                     </div>
-                </a>
+                </a> -->
             </div>
         </nav>
         <!-- insert content block -->

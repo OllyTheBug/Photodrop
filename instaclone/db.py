@@ -87,15 +87,25 @@ def get_photos_from_user(user_id):
     # entity to dict
     entity_dict = dict(entity)
     # return photos list
-    return entity_dict['photos']
+    if 'photos' in entity_dict:
+        return entity_dict['photos']
+    else:
+        return []
+        
 
 def get_public_photos_from_user(user_id):
+    '''
+    Returns a list of public photos from a user in the form (user's name, photo url, user id)
+    '''
+
     # get user from datastore
     entity = get_user_from_datastore_by_id(user_id)
     # entity to dict
     entity_dict = dict(entity)
     # return photos list
-    return [photo for photo in entity_dict['photos'] if photo['private'] == 'False']
+    if len(entity_dict['photos']) == 0:
+        return []
+    return [(entity_dict['name'], photo, user_id) for photo in entity_dict['photos'] if photo['private'] == 'False']
 
 def get_all_public_photos():
     all_users = get_all_users()
