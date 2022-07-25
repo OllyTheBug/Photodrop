@@ -67,6 +67,17 @@ def get_all_users():
     results = list(query.fetch())
     return results
 
+def get_user_pfp(user_id):
+    # get user from datastore
+    entity = get_user_from_datastore_by_id(user_id)
+    # entity to dict
+    entity_dict = dict(entity)
+    # return pfp
+    if 'pfp' in entity_dict:
+        return entity_dict['pfp']
+    else:
+        return None
+
 # -------------------------------- Photo creation ------------------------------- #
 def add_photo_to_user(user_id,url,private,caption):
     # get user from datastore
@@ -93,7 +104,7 @@ def get_photos_from_user(user_id):
         return []
         
 
-def get_public_photos_from_user(user_id):
+def get_public_photos_and_info_from_user(user_id):
     '''
     Returns a list of public photos from a user in the form (user's name, photo url, user id)
     '''
@@ -107,11 +118,11 @@ def get_public_photos_from_user(user_id):
         return []
     return [(entity_dict['name'], photo, user_id) for photo in entity_dict['photos'] if photo['private'] == 'False']
 
-def get_all_public_photos():
+def get_all_public_photos_and_info():
     all_users = get_all_users()
     all_public_photos = []
     for user in all_users:
-        all_public_photos.extend(get_public_photos_from_user(user.id))
+        all_public_photos.extend(get_public_photos_and_info_from_user(user.id))
     return all_public_photos
 
 # ------------------------------ Photo deletion ------------------------------ #

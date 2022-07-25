@@ -10,7 +10,7 @@ import os
 from uuid import uuid4
 
 # Local imports
-from instaclone.db import add_user_to_datastore, delete_photo_from_user, get_all_public_photos, get_public_photos_from_user, update_photo_of_user, usr_obj_from_datastore_by_id, add_photo_to_user, get_user_from_datastore_by_id, get_photos_from_user
+from instaclone.db import *
 
 views = Blueprint('views', __name__)
 
@@ -47,7 +47,7 @@ oauth_webapp_client = WebApplicationClient(GOOGLE_CLIENT_ID)
 @views.route('/')
 def render_index():
     # get all public photos
-    all_public_photos = get_all_public_photos()
+    all_public_photos = get_all_public_photos_and_info()
     return render_template('index.html', user=current_user, photos=all_public_photos)
 
 # --------------------------- Route login and oauth -------------------------- #
@@ -179,7 +179,7 @@ def profile():
     photos = get_photos_from_user(current_user.id)
     # convert list of entities to list of dicts
     photos = [dict(photo) for photo in photos]
-    return render_template('profile.html', photos=photos, user=current_user)
+    return render_template('profile.html', photos=photos, user=current_user, crud_enabled=True)
 
 # Route profile by id
 @views.route('/profile/<id>', methods=['GET'])
