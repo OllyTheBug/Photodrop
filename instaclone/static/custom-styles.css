@@ -1,0 +1,16 @@
+
+.is-4by3>img {
+    object-fit: contain;
+}
+
+.pfp-box{
+    width:max-content;
+    height:max-content;
+    border-radius:50%;
+    border:1px solid #e6e6e6;
+    overflow:hidden;
+}
+
+.pfp{
+    width: 60px;
+}

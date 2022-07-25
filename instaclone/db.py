@@ -116,7 +116,7 @@ def get_public_photos_and_info_from_user(user_id):
     # return photos list
     if len(entity_dict['photos']) == 0:
         return []
-    return [(entity_dict['name'], photo, user_id) for photo in entity_dict['photos'] if photo['private'] == 'False']
+    return [(entity_dict['name'], photo, user_id, entity_dict['pfp']) for photo in entity_dict['photos'] if photo['private'] == 'False']
 
 def get_all_public_photos_and_info():
     all_users = get_all_users()

@@ -185,7 +185,7 @@ def profile():
 @views.route('/profile/<id>', methods=['GET'])
 def profile_by_id(id):
     current_app.logger.info(f'{current_user.name} is viewing profile {id}')
-    photos_and_data = get_public_photos_from_user(id)
+    photos_and_data = get_public_photos_and_info_from_user(id)
     # in the form of (user name, photo url, user id)
 
     #parse out the photos
@@ -193,7 +193,8 @@ def profile_by_id(id):
     user = usr_obj_from_datastore_by_id(id)
     # convert list of entities to list of dicts
     photos = [dict(photo) for photo in just_photos]
-    return render_template('profile.html', photos=photos, user=user)
+    crud_enabled = current_user.id == id
+    return render_template('profile.html', photos=photos, user=user, crud_enabled=crud_enabled)
 
 # ---------------------------- Route photo access ---------------------------- #
 

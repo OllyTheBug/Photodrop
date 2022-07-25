@@ -3,11 +3,12 @@
 {% block content %}
 <div class="columns">
     <div class="column is-three-fifths is-offset-one-fifth">
-        <!-- for each photo in photos -->
+
+
         {% for photo in photos %}
         <div class="card">
             <div class="card-image">
-                <figure class="image">
+                <figure class="image is-4by3">
                     <img src="{{ photo[1]['url'] }}" alt="{{ photo[1].caption }}">
                 </figure>
             </div>
@@ -18,16 +19,22 @@
                     </div>
                     <div class="media-content">
                         <!-- pfp -->
-                        <img src="{{photo[3]}}" alt=""> 
-                        <a href="profile/{{photo[2]}}">
-                            <p class="title">{{photo[0]}}</p>
-                        </a>
-                        <p class="subtitle is-6">{{ photo.caption }}</p>
+                        <div class="pfp-box">
+                            <img class="pfp" src="{{photo[3]}}" alt="">
+                        </div>
+
+                            <a href="profile/{{photo[2]}}">
+                                <p class="title">{{photo[0]}}</p>
+                            </a>
+
+                        <p class="subtitle is-6">{{ photo[1]['caption'] }}</p>
                     </div>
                 </div>
+                <hr>
             </div>
 
         </div>
+        
         {% endfor %}
     </div>
     {% endblock %}
