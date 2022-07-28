@@ -1,7 +1,7 @@
 # import pymongo
 # from instaclone.models import User
 # # -------------------------- Database initialization ------------------------- #
-# MONGO_URI = "mongodb://ollythebug:qttZbrURvlEIWwZt@pport.2v20v.mongodb.net/?retryWrites=true&w=majority"
+# MONGO_URI = 
 # dbclient = pymongo.MongoClient(MONGO_URI)
 # db = dbclient.strings
 # user_collection = db.users
