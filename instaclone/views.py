@@ -19,8 +19,8 @@ views = Blueprint('views', __name__)
 # ---------------------------------------------------------------------------- #
 
 # ---------- Google login config DO NOT COMMIT TO PUBLIC REPOSITORY ---------- #
-GOOGLE_CLIENT_ID = "797500935739-h3mv5fr7rfvbhkbttql6p07pc0575vqr.apps.googleusercontent.com"
-GOOGLE_CLIENT_SECRET = "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"
+GOOGLE_CLIENT_ID = ""
+GOOGLE_CLIENT_SECRET = ""
 GOOGLE_DISCOVERY_URL = (
     "https://accounts.google.com/.well-known/openid-configuration"
 )
