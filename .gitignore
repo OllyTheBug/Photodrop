@@ -14,3 +14,4 @@ venv/
 instaclone/__pycache__/__init__.cpython-310.pyc
 instaclone/__pycache__/db.cpython-310.pyc
 instaclone/__pycache__/views.cpython-310.pyc
+*.pyc
